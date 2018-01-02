@@ -6,21 +6,21 @@
 #include <boost/asio.hpp>
 
 
-class Server
+namespace Tests
+{
+class Client
 {
 public:
-    Server();
-
-    void receive();
-    void send();
+    Client();
 
     std::thread run();
 
 private:
-    boost::asio::io_service _ioContext;
+    boost::asio::io_service ioContext;
+    boost::asio::ip::udp::endpoint _ep;
     boost::asio::ip::udp::socket _sock;
-    boost::asio::ip::udp::endpoint _clientEP;
 
     std::array<char, 1024> _buff;
-
 };
+}
+
