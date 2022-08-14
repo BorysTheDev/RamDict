@@ -1,13 +1,15 @@
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 
-set (PROJECT jana)
+set (PROJECT netdict)
+project(PROJECT LANGUAGES CXX)
 
-project (${PROJECT})
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories (.)
 
 if(CMAKE_COMPILER_IS_GNUCC)
-add_definitions (-Wall -pedantic -std=gnu++14 -g)
+add_definitions (-Wall -pedantic)
 endif()
 
 file(GLOB HEADERS
@@ -26,5 +28,5 @@ source_group ("Source Files" FILES ${SOURCES})
 
 add_executable (${PROJECT} ${HEADERS} ${SOURCES})
 
-target_link_libraries(${PROJECT} pthread boost_system)
+target_link_libraries(${PROJECT} pthread)
 

@@ -1,9 +1,9 @@
 #include "tests/client.h"
-#include "server.h"
+#include "tcp_server.h"
 
-int main(int argc, char *argv[])
+int main(int , char*[])
 {
-    Server server;
+    TCP_Server server(asio::ip::tcp::endpoint(asio::ip::address::from_string("127.0.0.1"), 8082));
     auto sth = server.run();
 
     Tests::Client client;

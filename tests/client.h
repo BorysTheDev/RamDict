@@ -3,7 +3,7 @@
 #include <array>
 #include <thread>
 
-#include <boost/asio.hpp>
+#include <asio.hpp>
 
 
 namespace Tests
@@ -15,10 +15,12 @@ public:
 
     std::thread run();
 
+    void do_send();
+    void do_receive();
+
 private:
-    boost::asio::io_service ioContext;
-    boost::asio::ip::udp::endpoint _ep;
-    boost::asio::ip::udp::socket _sock;
+    asio::io_service _io_context;
+    asio::ip::tcp::socket _sock;
 
     std::array<char, 1024> _buff;
 };
