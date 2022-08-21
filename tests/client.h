@@ -1,10 +1,11 @@
 #pragma once
 
-#include <array>
-#include <thread>
+#include "message.h"
 
 #include <asio.hpp>
 
+#include <array>
+#include <thread>
 
 namespace Tests
 {
@@ -16,13 +17,16 @@ public:
     std::thread run();
 
     void do_send();
-    void do_receive();
+    void do_receive_header();
+    void do_receive_body();
 
 private:
     asio::io_service _io_context;
     asio::ip::tcp::socket _sock;
 
-    std::array<char, 1024> _buff;
+    msg_header _header;
+    message msg;
+    std::vector<char> _buff;
 };
 }
 

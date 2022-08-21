@@ -1,4 +1,5 @@
 #include "client.h"
+#include "message.h"
 
 #include <iostream>
 #include <thread>
@@ -25,28 +26,45 @@ std::thread Client::run() {
 }
 
 void Client::do_send() {
-    char test[] = "test";
-    asio::async_write(_sock, asio::buffer(test, 4),
+    msg.fill(msg_header::SET, std::span<const char>("test", 4));
+    asio::async_write(_sock, asio::buffer(msg.buf),
                       [this](asio::error_code ec, std::size_t /*length*/) {
                           if (!ec) {
-                              std::cout << "send succesfull" << std::endl;
-                              do_receive();
+                              std::cout << "client send succesfull" << std::endl;
+                              do_receive_header();
                           } else {
                               _sock.close();
                           }
                       });
 }
 
-void Client::do_receive() {
-    asio::async_read(_sock, asio::buffer(_buff, _buff.size()),
-                     [this](asio::error_code ec, std::size_t length) {
-                         if (!ec) {
-                             do_send();
-                             std::cout.write(_buff.data(), length);
-                         } else {
-                             _sock.close();
-                         }
-                     });
+void Client::do_receive_header() {
+    asio::async_read(
+        _sock,
+        asio::buffer(&_header, sizeof(_header)),
+        [this](asio::error_code ec, std::size_t) {
+            if (!ec) {
+                std::cout << "msg_type: " << _header.msg_type << ", msg_size: " << _header.msg_size << std::endl;
+                _buff.resize(_header.msg_size);
+                do_receive_body();
+            } else {
+                _sock.close();
+            }
+        });
+}
+
+void Client::do_receive_body() {
+    asio::async_read(
+        _sock,
+        asio::buffer(_buff, _buff.size()),
+        [this](asio::error_code ec, std::size_t length) {
+            if (!ec) {
+                std::cout.write(_buff.data(), length) << std::endl;
+                do_send();
+            } else {
+                _sock.close();
+            }
+        });
 }
 
 } // namespace Tests
